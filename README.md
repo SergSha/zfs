@@ -1,18 +1,18 @@
-ZFS
+#####   ZFS   #####
 
-Создадим виртуальную машину
+###   Создадим виртуальную машину
 
-В домашней директории создадим директорию zfs, в котором будут храниться настройки виртуальной машины и дополнительные диски:
+## В домашней директории создадим директорию zfs, в котором будут храниться настройки виртуальной машины и дополнительные диски:
 
 [student@pv-homeworks1-10 sergsha]$ mkdir ./zfs
 [student@pv-homeworks1-10 sergsha]$
 
-Перейлём в директорию zfs:
+## Перейлём в директорию zfs:
 
 [student@pv-homeworks1-10 sergsha]$ cd ./zfs/
 [student@pv-homeworks1-10 zfs]$
 
-Клонируем файлы zfs с github.com:
+## Клонируем файлы zfs с github.com:
 
 [student@pv-homeworks1-10 zfs]$ git clone https://github.com/SergSha/zfs.git
 Cloning into 'zfs'...
@@ -23,12 +23,12 @@ remote: Total 15 (delta 1), reused 9 (delta 1), pack-reused 0
 Unpacking objects: 100% (15/15), done.
 [student@pv-homeworks1-10 zfs]$
  
-Заходим в склонированную с github.com директорию zfs:
+## Заходим в склонированную с github.com директорию zfs:
 
 [student@pv-homeworks1-10 zfs]$ cd ./zfs/
 [student@pv-homeworks1-10 zfs]$
 
-Содержимое директории zfs:
+## Содержимое директории zfs:
 
 [student@pv-homeworks1-10 zfs]$ ls -l
 total 12
@@ -37,9 +37,10 @@ total 12
 -rw-rw-r--. 1 student student 2994 May 22 20:37 Vagrantfile
 [student@pv-homeworks1-10 zfs]$
  
-С помощью редактора vi откроем файл Vagrantfile:
+## С помощью редактора vi откроем файл Vagrantfile:
 
 [student@pv-homeworks1-10 zfs]$ vi ./Vagrantfile
+
 ------------------------------
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
@@ -150,19 +151,20 @@ config.vm.define "server" do |server|
   end
 
 end
+
 ------------------------------
 
-В строчке 
+## В строчке 
   disks = (1..6).map { |x| ["disk#{x}_", '1024'] }
-количество дисков увеличим до восьми для выполнения домашнего задания, т. е.  
+## количество дисков увеличим до восьми для выполнения домашнего задания, т. е.  
   disks = (1..8).map { |x| ["disk#{x}_", '1024'] }
  
-Содержимое скрипта setup_zfs.sh:
+## Содержимое скрипта setup_zfs.sh:
 
 [student@pv-homeworks1-10 zfs]$ vi ./setup_zfs.sh
+
 ------------------------------
 #!/bin/bash
-
 
 # https://www.centos.org/centos-linux-eol/
 # so this is workaround to use vault
@@ -185,11 +187,12 @@ modprobe zfs
 cd /usr/share/bash-completion/completions/
 curl -O https://raw.githubusercontent.com/openzfs/zfs/zfs-0.8-release/contrib/bash_completion.d/zfs
 chmod +x zfs
+
 ------------------------------
 
-Создаём и запускаем виртуальную машину server:
+## Создаём и запускаем виртуальную машину server:
 
-[[student@pv-homeworks1-10 zfs]$ vagrant up server
+[student@pv-homeworks1-10 zfs]$ vagrant up server
 Bringing machine 'server' up with 'virtualbox' provider...
 ==> server: Importing base box 'bento/centos-8'...
 ==> server: Matching MAC address for NAT networking...
@@ -372,7 +375,7 @@ Bringing machine 'server' up with 'virtualbox' provider...
 100 11305  100 11305    0     0  50244      0 --:--:-- --:--:-- --:--:-- 50244
 [student@pv-homeworks1-10 zfs]$
  
-Проверим статус созданной и запущенной машины server:
+## Проверим статус созданной и запущенной машины server:
 
 [student@pv-homeworks1-10 zfs]$ vagrant status server
 Current machine states:
@@ -385,7 +388,7 @@ suspend the virtual machine. In either case, to restart it again,
 simply run `vagrant up`.
 [student@pv-homeworks1-10 zfs]$
  
-Заходим в машину server:
+## Заходим в машину server:
 
 [student@pv-homeworks1-10 zfs]$ vagrant ssh server
 
@@ -393,15 +396,15 @@ This system is built by the Bento project by Chef Software
 More information can be found at https://github.com/chef/bento
 [vagrant@server ~]$
  
-Заходим под правами root:
+## Заходим под правами root:
 
 [vagrant@server ~]$ sudo -i
 [root@server ~]#
 
 
-1. Определение алгоритма с наилучшим сжатием
+###   1. Определение алгоритма с наилучшим сжатием
  
-Смотрим список дисков в запущенной машине:
+## Смотрим список дисков в запущенной машине:
 
 [root@server ~]# lsblk
 NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
@@ -418,7 +421,7 @@ sdh      8:112  0    1G  0 disk
 sdi      8:128  0    1G  0 disk
 [root@server ~]#
  
-Создаём 4 пула из двух дисков в режиме RAID 1:
+## Создаём 4 пула из двух дисков в режиме RAID 1:
 
 [root@server ~]# zpool create pool1 mirror /dev/sdb /dev/sdc
 [root@server ~]# zpool create pool2 mirror /dev/sdd /dev/sde
@@ -426,7 +429,7 @@ sdi      8:128  0    1G  0 disk
 [root@server ~]# zpool create pool4 mirror /dev/sdh /dev/sdi
 [root@server ~]#
  
-Смотрим информацию о пулах:
+## Смотрим информацию о пулах:
 
 [root@server ~]# zpool list
 NAME    SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
@@ -436,25 +439,24 @@ pool3   960M   104K   960M        -         -     0%     0%  1.00x    ONLINE  -
 pool4   960M   105K   960M        -         -     0%     0%  1.00x    ONLINE  -
 [root@server ~]#
  
-Добавим разные алгоритмы сжатия в каждую файловую систему
-обавим разные алгоритмы сжатия в каждую файловую систему:
-● Алгоритм lzjb: 
+## Добавим разные алгоритмы сжатия в каждую файловую систему:
+## ● Алгоритм lzjb: 
 
 [root@server ~]# zfs set compression=lzjb pool1
  
-● Алгоритм lz4: 
+## ● Алгоритм lz4: 
 
 [root@server ~]# zfs set compression=lz4 pool2
 
-● Алгоритм gzip: 
+## ● Алгоритм gzip: 
 
 [root@server ~]# zfs set compression=gzip-9 pool3
 
-● Алгоритм zle: 
+## ● Алгоритм zle: 
 
 [root@server ~]# zfs set compression=zle pool4
  
-Проверим, что все файловые системы имеют разные методы сжатия:
+## Проверим, что все файловые системы имеют разные методы сжатия:
 
 [root@server ~]# zfs get all | grep compression
 pool1  compression           lzjb                   local
@@ -463,7 +465,7 @@ pool3  compression           gzip-9                 local
 pool4  compression           zle                    local
 [root@server ~]#
   
-Скачаем один и тот же текстовый файл, например, “Война и мир” во все пулы:
+## Скачаем один и тот же текстовый файл, например, “Война и мир” во все пулы:
 
 [root@server ~]# for i in {1..4}; do wget -O /pool$i/War_and_Peace.txt https://gutenberg.org/files/2600/2600-0.txt; done
 --2022-05-22 19:20:48--  https://gutenberg.org/files/2600/2600-0.txt
@@ -512,7 +514,7 @@ Saving to: ‘/pool4/War_and_Peace.txt’
 
 [root@server ~]#
  
-Проверим, что файл был скачан во все пулы:
+## Проверим, что файл был скачан во все пулы:
 
 [root@server ~]# ls -l /pool*
 /pool1:
@@ -532,8 +534,8 @@ total 3287
 -rw-r--r--. 1 root root 3359408 Jun 22  2021 War_and_Peace.txt
 [root@server ~]#
  
-Уже на этом этапе видно, что самый оптимальный метод сжатия у нас используется в пуле pool3.
-Проверим, сколько места занимает один и тот же файл в разных пулах и проверим степень сжатия файлов:
+## Уже на этом этапе видно, что самый оптимальный метод сжатия у нас используется в пуле pool3.
+## Проверим, сколько места занимает один и тот же файл в разных пулах и проверим степень сжатия файлов:
 
 [root@server ~]# zfs list
 NAME    USED  AVAIL     REFER  MOUNTPOINT
@@ -550,12 +552,12 @@ pool3  compressratio         2.62x                  -
 pool4  compressratio         1.01x                  -
 [root@server ~]#
  
-Как видим, что алгоритм gzip-9 самый эффективный по сжатию.
+## Как видим, что алгоритм gzip-9 самый эффективный по сжатию.
 
 
-2. Определение настроек пула
+###   2. Определение настроек пула
 
-Скачаем архив в домашний каталог:
+## Скачаем архив в домашний каталог:
 
 [root@server ~]# [root@server ~]# wget -O archive.tar.gz https://drive.google.com/u/0/uc?id=1KRBNW33QWqbvbVHa3hLJivOAt60yukkg
 --2022-05-22 19:33:52--  https://drive.google.com/u/0/uc?id=1KRBNW33QWqbvbVHa3hLJivOAt60yukkg
@@ -581,7 +583,7 @@ archive.tar.gz        100%[======================>]   6.94M  37.0MB/s    in 0.2s
 
 [root@server ~]#
   
-Разархивируем его:
+## Разархивируем его:
 
 [root@server ~]# tar -xzvf ./archive.tar.gz
 zpoolexport/
@@ -595,7 +597,7 @@ total 7108
 drwxr-xr-x. 2 root root      32 May 15  2020 zpoolexport
 [root@server ~]#
  
-Проверим, возможно ли импортировать данный каталог в пул:
+## Проверим, возможно ли импортировать данный каталог в пул:
 
 [root@server ~]# zpool import -d ./zpoolexport/
    pool: otus
@@ -612,14 +614,13 @@ status: Some supported features are not enabled on the pool.
             /root/zpoolexport/fileb  ONLINE
 [root@server ~]#
    
-Данный вывод показывает нам имя пула, тип raid и его состав.
-Сделаем импорт данного пула к нам в ОС:
+## Данный вывод показывает нам имя пула, тип raid и его состав.
+## Сделаем импорт данного пула к нам в ОС:
 
 [root@server ~]# zpool import -d ./zpoolexport/ otus
 [root@server ~]#
 
-Команда zpool status выдаст нам информацию о составе импортированного
-пула:
+## Команда zpool status выдаст нам информацию о составе импортированного пула:
 
 [root@server ~]# zpool status otus
   pool: otus
@@ -640,7 +641,7 @@ config:
 errors: No known data errors
 [root@server ~]#
 
-Запрос сразу всех параметров пула:
+## Запрос сразу всех параметров пула:
 
 [root@server ~]# zpool get all otus
 NAME  PROPERTY                       VALUE                          SOURCE
@@ -706,7 +707,7 @@ otus  feature@device_rebuild         disabled                       local
 otus  feature@zstd_compress          disabled                       local
 [root@server ~]#
 
-Запрос сразу всех параметром файловой системы:
+## Запрос сразу всех параметром файловой системы:
 
 [root@server ~]# zfs get all otus
 NAME  PROPERTY              VALUE                  SOURCE
@@ -784,35 +785,35 @@ otus  pbkdf2iters           0                      default
 otus  special_small_blocks  0                      default
 [root@server ~]#
 
-Размер хранилища:
+## Размер хранилища:
 
 [root@server ~]# zfs get available otus
 NAME  PROPERTY   VALUE  SOURCE
 otus  available  350M   -
 [root@server ~]#
  
-Тип:
+## Тип:
 
 [root@server ~]# zfs get readonly otus
 NAME  PROPERTY  VALUE   SOURCE
 otus  readonly  off     default
 [root@server ~]#
  
-Значение recordsize:
+## Значение recordsize:
 
 [root@server ~]# zfs get recordsize otus
 NAME  PROPERTY    VALUE    SOURCE
 otus  recordsize  128K     local
 [root@server ~]#
  
-Тип сжатия (или параметр отключения):
+## Тип сжатия (или параметр отключения):
 
 [root@server ~]# zfs get compression otus
 NAME  PROPERTY     VALUE           SOURCE
 otus  compression  zle             local
 [root@server ~]#
  
-Тип контрольной суммы:
+## Тип контрольной суммы:
 
 [root@server ~]# zfs get checksum otus
 NAME  PROPERTY  VALUE      SOURCE
@@ -820,9 +821,9 @@ otus  checksum  sha256     local
 [root@server ~]#
  
 
-3. Работа со снапшотом, поиск сообщения от преподавателя
+###   3. Работа со снапшотом, поиск сообщения от преподавателя
 
-Скачиваем файл из задания:
+## Скачиваем файл из задания:
 
 [root@server ~]# wget -O otus_task2.file --no-check-certificate 'https://drive.google.com/u/0/uc?id=1gH8gCL9y7Nd5Ti3IRmplZPF1XjzxeRAG&export=download'
 --2022-05-22 20:00:27--  https://drive.google.com/u/0/uc?id=1gH8gCL9y7Nd5Ti3IRmplZPF1XjzxeRAG&export=download
@@ -848,18 +849,18 @@ otus_task2.file       100%[======================>]   5.18M  --.-KB/s    in 0.1s
 
 [root@server ~]#
  
-Восстанавливаем файловую систему из снапшота:
+## Восстанавливаем файловую систему из снапшота:
 
 [root@server ~]# zfs receive otus/test@today < ./otus_task2.file
 [root@server ~]#
  
-Находим в каталоге /otus/test файл с именем “secret_message”:
+## Находим в каталоге /otus/test файл с именем “secret_message”:
 
 [root@server ~]# find /otus/test/ -name "secret_message"
 /otus/test/task1/file_mess/secret_message
 [root@server ~]#
  
-Смотрим содержимое найденного файла:
+## Смотрим содержимое найденного файла secret_message:
 
 [root@server ~]# cat /otus/test/task1/file_mess/secret_message
 https://github.com/sindresorhus/awesome
